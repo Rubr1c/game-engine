@@ -1,6 +1,6 @@
 package dev.rubr1c.core;
 
-import dev.rubr1c.test.Launcher;
+import dev.rubr1c.test.Main;
 import dev.rubr1c.core.utils.Constants;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -9,22 +9,24 @@ public class EngineManager {
 
     private static final long NANOSECOND = 1000000000L;
     private static final float FRAMERATE = 1000;
-
     private static int fps;
     private static float frametime = 1 / FRAMERATE;
-
+    private static float currentFrametime = 0;
     private boolean isRunning;
 
     private WindowManager window;
+    private MouseInput mouseInput;
     private GLFWErrorCallback errorCallback;
     private ILogic gameLogic;
 
     private void init() throws Exception {
         GLFW.glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
-        window = Launcher.getWindow();
-        gameLogic = Launcher.getGame();
+        window = Main.getWindow();
+        gameLogic = Main.getGame();
+        mouseInput = new MouseInput();
         window.init();
         gameLogic.init();
+        mouseInput.init();
     }
 
     public void start() throws Exception {
@@ -68,7 +70,7 @@ public class EngineManager {
             }
 
             if (render) {
-                update();
+                update(frametime);
                 render();
                 frames++;
             }
@@ -84,6 +86,7 @@ public class EngineManager {
     }
 
     private void input() {
+        mouseInput.input();
         gameLogic.input();
     }
 
@@ -92,8 +95,8 @@ public class EngineManager {
         window.update();
     }
 
-    private void update() {
-        gameLogic.update();
+    private void update(float interval) {
+        gameLogic.update(interval, mouseInput);
     }
 
     private void cleanup() {

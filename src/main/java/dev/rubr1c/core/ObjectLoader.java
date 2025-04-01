@@ -21,7 +21,7 @@ public class ObjectLoader {
     private List<Integer> vbos = new ArrayList<>();
     private List<Integer> textures = new ArrayList<>();
 
-    public Model loadModel(float[] vertices, float[] textureCoords,int[] indices) {
+    public Model loadModel(float[] vertices, float[] textureCoords, int[] indices) {
         int id = createVAO();
         storeInIndicesBuffer(indices);
         storeDataInAttributeList(0, 3, vertices);
@@ -34,10 +34,10 @@ public class ObjectLoader {
         int width, height;
         ByteBuffer buffer;
 
-        try(MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer w =  stack.mallocInt(1);
-            IntBuffer h =  stack.mallocInt(1);
-            IntBuffer c =  stack.mallocInt(1);
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer w = stack.mallocInt(1);
+            IntBuffer h = stack.mallocInt(1);
+            IntBuffer c = stack.mallocInt(1);
 
             buffer = STBImage.stbi_load(filename, w, h, c, 4);
 
@@ -52,8 +52,15 @@ public class ObjectLoader {
         textures.add(id);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
         GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
-        GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height,
+                0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+
+        // Set texture parameters for pixel art
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+
         STBImage.stbi_image_free(buffer);
         return id;
     }
@@ -89,13 +96,13 @@ public class ObjectLoader {
     }
 
     public void cleanup() {
-        for (int vao: vaos)
+        for (int vao : vaos)
             GL30.glDeleteVertexArrays(vao);
 
-        for (int vbo: vbos)
+        for (int vbo : vbos)
             GL30.glDeleteBuffers(vbo);
 
-        for (int texture: textures)
+        for (int texture : textures)
             GL11.glDeleteTextures(texture);
     }
 }

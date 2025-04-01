@@ -1,5 +1,6 @@
 package dev.rubr1c.core;
 
+import dev.rubr1c.core.utils.Constants;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -9,9 +10,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 
 public class WindowManager {
-    public static float FOV = (float) Math.toRadians(60);
-    public static final float Z_NEAR = 0.01f;
-    public static final float Z_FAR = 1000f;
+
 
     private final String title;
 
@@ -23,9 +22,9 @@ public class WindowManager {
     private final Matrix4f projectionMatrix;
 
     public WindowManager(String title,
-                         int width,
-                         int height,
-                         boolean vsync) {
+            int width,
+            int height,
+            boolean vsync) {
         this.title = title;
         this.width = width;
         this.height = height;
@@ -69,7 +68,7 @@ public class WindowManager {
 
         GLFW.glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
             // set keys
-            if (key == GLFW.GLFW_KEY_ESCAPE &&  action == GLFW.GLFW_RELEASE) {
+            if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE) {
                 GLFW.glfwSetWindowShouldClose(window, true);
             }
         });
@@ -94,11 +93,11 @@ public class WindowManager {
 
         GL.createCapabilities();
 
-        GL11.glClearColor(0.0f,0.0f, 0.0f, 0.0f);
+        GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_STENCIL_TEST);
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glCullFace(GL11.GL_BACK);
+        // GL11.glEnable(GL11.GL_CULL_FACE);
+        // GL11.glCullFace(GL11.GL_BACK);
     }
 
     public void update() {
@@ -123,7 +122,7 @@ public class WindowManager {
     }
 
     public String getTitle() {
-        return  title;
+        return title;
     }
 
     public void setTitle(String title) {
@@ -162,7 +161,7 @@ public class WindowManager {
         this.height = height;
     }
 
-    public long getWindow() {
+    public long getWindowHandle() {
         return window;
     }
 
@@ -176,11 +175,11 @@ public class WindowManager {
 
     public Matrix4f updateProjectionMatrix() {
         float aspectRatio = (float) width / height;
-        return projectionMatrix.setPerspective(FOV, aspectRatio, Z_NEAR, Z_FAR);
+        return projectionMatrix.setPerspective(Constants.FOV, aspectRatio, Constants.Z_NEAR, Constants.Z_FAR);
     }
 
     public Matrix4f updateProjectionMatrix(Matrix4f matrix4f, int width, int height) {
         float aspectRatio = (float) width / height;
-        return matrix4f.setPerspective(FOV, aspectRatio, Z_NEAR, Z_FAR);
+        return matrix4f.setPerspective(Constants.FOV, aspectRatio, Constants.Z_NEAR, Constants.Z_FAR);
     }
 }

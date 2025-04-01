@@ -5,7 +5,7 @@ import dev.rubr1c.core.ILogic;
 import dev.rubr1c.core.WindowManager;
 import dev.rubr1c.core.utils.Constants;
 
-public class Launcher {
+public class Main {
 
     private static WindowManager window;
     private static TestGame game;
